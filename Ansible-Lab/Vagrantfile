@@ -1,0 +1,126 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+#
+# DEFINE VM : Ansible01 for the lab.
+#
+#
+  config.vm.define "ansible01" do |ansible_server|
+    
+    # What vagrant settings are we going to use?
+    ansible_server.vm.box = "generic/ubuntu2004"
+    ansible_server.vm.hostname = "ansible01"
+
+    ansible_server.vm.provider "vmware_workstation" do |v|
+      v.gui = true
+
+      # Set Processors and Ram
+      v.vmx["memsize"] = "6144"
+      v.vmx["numcpus"] = "2"
+
+      # Configure VM Networking
+      v.vmx["ethernet0.connectiontype"] = "nat"
+      v.vmx["ethernet0.vnet"] = "/dev/vmnet2"
+
+      # Install Software...
+      config.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y software-properties-common
+    SHELL
+    end
+      
+  end
+#
+# VM 1: COnfigTarget01
+#
+#
+
+  config.vm.define "configtarget01" do | target_server1 |
+  
+    target_server1.vm.box = "generic/ubuntu2004"
+    target_server1.vm.hostname = "configtarget01"
+
+    target_server1.vm.provider "vmware_workstation" do |v|
+    
+      v.vmx["memsize"] = "1024"
+      v.vmx["numcpus"] = "1"
+
+      # Configure networking
+      v.vmx["ethernet0.connectiontype"] = "nat"
+
+      # update and restart the VM
+      config.vm.provision "shell", inline: <<-SHELL
+      apt-update
+      apt upgrade -y
+      reboot
+
+      SHELL
+
+    end
+
+  end
+
+#
+# VM 3: ConfigTarget02
+#
+#
+
+  config.vm.define "configtarget02" do | target_server1 |
+  
+    target_server1.vm.box = "generic/ubuntu2004"
+    target_server1.vm.hostname = "configtarget02"
+
+    target_server1.vm.provider "vmware_workstation" do |v|
+    
+      v.vmx["memsize"] = "1024"
+      v.vmx["numcpus"] = "1"
+
+      # Configure networking
+      v.vmx["ethernet0.connectiontype"] = "nat"
+
+      # update and restart the VM
+      config.vm.provision "shell", inline: <<-SHELL
+      apt-update
+      apt upgrade -y
+      reboot
+
+      SHELL
+
+    end
+
+  end
+
+
+
+
+
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # NOTE: This will enable public access to the opened port
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine and only allow access
+  # via 127.0.0.1 to disable public access
+  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  # config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  # config.vm.synced_folder "../data", "/vagrant_data"
+
+end
