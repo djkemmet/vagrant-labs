@@ -3,94 +3,55 @@
 
 Vagrant.configure("2") do |config|
 
-#
-# DEFINE VM : Ansible01 for the lab.
-#
-#
-  config.vm.define "ansible01" do |ansible_server|
-    
-    # What vagrant settings are we going to use?
-    ansible_server.vm.box = "generic/ubuntu2004"
-    ansible_server.vm.hostname = "ansible01"
 
-    ansible_server.vm.provider "vmware_workstation" do |v|
-      v.gui = true
+  for i in 1..3 do
+    config.vm.define "node-#{i}" do |node|
+      node.vm.box = "generic/ubuntu2004"
+      node.vm.hostname = "node-#{i}"
 
-      # Set Processors and Ram
-      v.vmx["memsize"] = "6144"
-      v.vmx["numcpus"] = "2"
-
-      # Configure VM Networking
-      v.vmx["ethernet0.connectiontype"] = "nat"
-      v.vmx["ethernet0.vnet"] = "/dev/vmnet2"
-
-      # Install Software...
-      config.vm.provision "shell", inline: <<-SHELL
-      apt-get update
-      apt-get install -y software-properties-common
-    SHELL
-    end
+      node.vm.provider "vmware_workstation" do |vm|
       
+        #Configure The Processors and memory
+        vm.vmx["numcpus"] = "1"
+        vm.vmx["memsize"] = "2048"
+
+        # Configure the networking
+        vm.vmx["ethernet0.connectiontype"] = "nat"
+        vm.vmx["ethernet0.vnet"] = "/dev/vmnet2"
+      end
+
+      # Patch the Target
+      node.vm.provision "shell", inline: "apt -y update && apt -y upgrade"
+
+    end
   end
-#
-# VM 1: COnfigTarget01
-#
-#
 
-  config.vm.define "configtarget01" do | target_server1 |
+  for i in 1..1 do
   
-    target_server1.vm.box = "generic/ubuntu2004"
-    target_server1.vm.hostname = "configtarget01"
+    config.vm.define "ansible-#{i}" do |ansible_server|
+      ansible_server.vm.box = "generic/ubuntu2004"
+      ansible_server.vm.hostname = "ansible-#{i}"
 
-    target_server1.vm.provider "vmware_workstation" do |v|
-    
-      v.vmx["memsize"] = "1024"
-      v.vmx["numcpus"] = "1"
+      ansible_server.vm.provider "vmware_workstation" do |vm|
 
-      # Configure networking
-      v.vmx["ethernet0.connectiontype"] = "nat"
+        # Configure cores and memory
+        vm.vmx["numcpus"] = "2"
+        vm.vmx["memsize"] = "2048"
 
-      # update and restart the VM
-      config.vm.provision "shell", inline: <<-SHELL
-      apt-update
-      apt upgrade -y
-      reboot
+        # Configure the networking
+        vm.vmx["ethernet0.connectiontype"] = "nat"
+        vm.vmx["ethernet0.vnet"] = "/dev/vmnet2"
+      end
 
-      SHELL
+      ansible_server.vm.provision "shell", inline: "apt install -y ansible"
 
     end
 
-  end
-
-#
-# VM 3: ConfigTarget02
-#
-#
-
-  config.vm.define "configtarget02" do | target_server1 |
-  
-    target_server1.vm.box = "generic/ubuntu2004"
-    target_server1.vm.hostname = "configtarget02"
-
-    target_server1.vm.provider "vmware_workstation" do |v|
-    
-      v.vmx["memsize"] = "1024"
-      v.vmx["numcpus"] = "1"
-
-      # Configure networking
-      v.vmx["ethernet0.connectiontype"] = "nat"
-
-      # update and restart the VM
-      config.vm.provision "shell", inline: <<-SHELL
-      apt-update
-      apt upgrade -y
-      reboot
-
-      SHELL
-
-    end
 
   end
+
+
+
 
 
 

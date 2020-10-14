@@ -1,0 +1,2 @@
+# Just get the vagrant files, not the vms and stuff.
+.vagrant
