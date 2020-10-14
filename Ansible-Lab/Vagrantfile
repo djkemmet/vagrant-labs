@@ -19,13 +19,13 @@ Vagrant.configure("2") do |config|
         vm.vmx["memsize"] = "2048"
 
         # then tell it to use NATing but set a vnet for me to fall back on for schenanigans
-        vm.vmx["ethernet0.connectiontype"] = "nat"
+        vm.vmx["ethernet0.connectiontype"] = "custom"
         vm.vmx["ethernet0.vnet"] = "/dev/vmnet2"
     
       end
 
       # Patch the Target
-      node.vm.provision "shell", inline: "apt -y update && apt -y upgrade"
+      #node.vm.provision "shell", inline: "apt -y update && apt -y upgrade"
 
     # End of the Virtual Machine Definition
     end
@@ -51,7 +51,7 @@ Vagrant.configure("2") do |config|
         ansible_server_provider.vmx["memsize"] = "4096"
 
         # then tell it to use NATing but set a vnet for me to fall back on for schenanigans
-        ansible_server_provider.vmx["ethernet0.connectiontype"] = "nat"
+        ansible_server_provider.vmx["ethernet0.connectiontype"] = "custom"
         ansible_server_provider.vmx["ethernet0.vnet"] = "/dev/vmnet2"
       end
 
