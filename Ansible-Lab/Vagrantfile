@@ -10,7 +10,6 @@ Vagrant.configure("2") do |config|
       # Define the "base image" and the hostname for the VM
       node.vm.box = "generic/ubuntu2004"
       node.vm.hostname = "node-#{i}"
-      node.vm.network :private_network, type: "dhcp"
 
       # Ask vmware_workstaion to make the following changes...
       node.vm.provider "vmware_workstation" do |vm|
@@ -18,6 +17,8 @@ Vagrant.configure("2") do |config|
         # configure the VM to have 1 core and 2GB of ram
         vm.memory = 2048
         vm.cpus = 1
+
+        vm.vmx["ethernet0.connectionType"] = "nat"
     
       end
 
@@ -47,6 +48,8 @@ Vagrant.configure("2") do |config|
         # Configure the VM to have 2 cores and 4GB of ram
         ansible_server_provider.memory = 4096
         ansible_server_provider.cpus = 2
+
+        ansible_server_provider.vmx["ethernet0.connectionType"] = "nat"
 
       end
 
