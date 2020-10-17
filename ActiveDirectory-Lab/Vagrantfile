@@ -2,22 +2,69 @@
 # vi: set ft=ruby :
 Vagrant.configure("2") do |config|
 
-  # Make 4 clients for our AD Environment
-  for i in 1..4 do
-    config.vm.define "client-#{i}" do |client_computer|
-      client_computer.vm.box = "StefanScherer/windows_10"
-      client_computer.vm.hostname = "client-#{i}"
+
+config.vm.define "client-01" do |client_computer|
+  client_computer.vm.box = "StefanScherer/windows_10"
+  #client_computer.vm.hostname = "client-#{i}"
 
 
-      client_computer.vm.provider "vmware_workstation" do |vmware_provider|
-        vmware_provider.memory = 4096
-        vmware_provider.cpus = 2
 
-        #vmware_provider.vmx["ethernet0.connectionType"] = "nat"
-      end # End the Provider specifications
+  client_computer.vm.provider "vmware_workstation" do |vmware_provider|
+    vmware_provider.memory = 4096
+    vmware_provider.cpus = 2
 
-    end # End the config definition
+    # Put our hosts on VMNET10, our domain lab.
+    #vmware_provider.vmx["ethernet1.connectionType"] = "custom"
+    #vmware_provider.vmx["ethernet1.vnet"] = "/dev/vmnet10"
 
-  end # End of For Lopp...
+    #vmware_provider.vmx["ethernet0.connectionType"] = "bridged"
+
+  end # End the Provider specifications
+
+end # End the config definition
+
+
+config.vm.define "client-02" do |client_computer|
+  client_computer.vm.box = "StefanScherer/windows_10"
+  #client_computer.vm.hostname = "client-#{i}"
+
+
+
+  client_computer.vm.provider "vmware_workstation" do |vmware_provider|
+    vmware_provider.memory = 4096
+    vmware_provider.cpus = 2
+
+    # Put our hosts on VMNET10, our domain lab.
+    vmware_provider.vmx["ethernet1.connectionType"] = "custom"
+    vmware_provider.vmx["ethernet1.vnet"] = "/dev/vmnet10"
+
+    vmware_provider.vmx["ethernet0.connectionType"] = "nat"
+  end # End the Provider specifications
+
+end # End the config definition
+
+
+config.vm.define "client-03" do |client_computer|
+  client_computer.vm.box = "StefanScherer/windows_10"
+  #client_computer.vm.hostname = "client-#{i}"
+
+
+
+  client_computer.vm.provider "vmware_workstation" do |vmware_provider|
+    vmware_provider.memory = 4096
+    vmware_provider.cpus = 2
+
+    # Put our hosts on VMNET10, our domain lab.
+    vmware_provider.vmx["ethernet0.connectionType"] = "custom"
+    vmware_provider.vmx["ethernet0.vnet"] = "/dev/vmnet10"
+
+    # Put our hosts on VMNET10, our domain lab.
+    vmware_provider.vmx["ethernet1.connectionType"] = "custom"
+    vmware_provider.vmx["ethernet1.vnet"] = "/dev/vmnet10"
+
+    vmware_provider.vmx["ethernet0.connectionType"] = "nat"
+  end # End the Provider specifications
+
+end # End the config definition
 
 end # End of vagrant File
